@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#08080c">
+<title>FitTrack</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#08080c;--c1:#111118;--c2:#18181f;--c3:#1e1e28;
+  --bd:#252530;--bd2:#333345;
+  --t:#eaeaf0;--t2:#8888a0;--t3:#555568;
+  --a:#22d3ee;--a2:#06b6d4;--a3:rgba(34,211,238,.12);
+  --g:#34d399;--g2:rgba(52,211,153,.12);
+  --r:#f87171;--r2:rgba(248,113,113,.12);
+  --o:#fbbf24;--o2:rgba(251,191,36,.12);
+  --p:#a78bfa;--p2:rgba(167,139,250,.12);
+  --b:#60a5fa;--b2:rgba(96,165,250,.12);
+  --R:16px;--R2:12px;--R3:10px;
+}
+html{font-size:16px}
+body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif;background:var(--bg);color:var(--t);min-height:100vh;padding-bottom:88px;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+input,textarea,select{font-family:inherit;font-size:16px;color:var(--t)}
+::placeholder{color:var(--t3)}
+
+.hd{position:sticky;top:0;z-index:100;background:rgba(8,8,12,.85);backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px);border-bottom:1px solid var(--bd);padding:10px 16px}
+.hd-r{display:flex;align-items:center;justify-content:space-between}
+.hd-t{font-size:20px;font-weight:800;letter-spacing:-.5px}
+.hd-t span{background:linear-gradient(135deg,var(--a),var(--p));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hd-s{font-size:11px;color:var(--t3);margin-top:1px}
+.pp{font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px}
+.pp.p1{background:var(--a3);color:var(--a)}.pp.p2{background:var(--p2);color:var(--p)}
+
+.tb{position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(17,17,24,.94);backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px);border-top:1px solid var(--bd);display:flex;padding:6px 4px calc(env(safe-area-inset-bottom,6px)+4px)}
+.tb button{flex:1;display:flex;flex-direction:column;align-items:center;gap:1px;background:none;border:none;color:var(--t3);font-size:10px;font-weight:600;padding:6px 2px;border-radius:10px;cursor:pointer;transition:.2s}
+.tb button.on{color:var(--a)}
+.tb button .i{font-size:22px;line-height:1}
+
+.pg{display:none;padding:14px 14px 20px;animation:fu .25s ease}
+.pg.on{display:block}
+@keyframes fu{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+.cd{background:var(--c1);border:1px solid var(--bd);border-radius:var(--R);padding:16px;margin-bottom:10px}
+.ch{font-size:12px;font-weight:700;color:var(--t2);letter-spacing:.8px;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.ch .e{font-size:15px}
+
+.r2{display:flex;gap:8px}
+.fg{flex:1}
+.fg label{display:block;font-size:11px;color:var(--t3);margin-bottom:5px;font-weight:500}
+.fg input,.fg select{width:100%;padding:10px 12px;background:var(--c2);border:1px solid var(--bd);border-radius:var(--R3);outline:none;transition:.2s}
+.fg input:focus,.fg select:focus{border-color:var(--a)}
+.fg select{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238888a0' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+
+.dg{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+.db{padding:12px 6px;border-radius:var(--R2);border:1.5px solid var(--bd);background:var(--c2);color:var(--t2);font-size:12px;font-weight:600;cursor:pointer;text-align:center;transition:.2s;user-select:none}
+.db:active{transform:scale(.97)}
+.db.on{border-color:var(--a);background:var(--a3);color:var(--a)}
+.db .ii{font-size:22px;display:block;margin-bottom:3px}
+.db .s{font-size:10px;color:var(--t3);font-weight:400;margin-top:1px}
+.db.on .s{color:var(--a);opacity:.7}
+
+.ml{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bd)}
+.ml:last-child{border-bottom:none}
+.mc{width:24px;height:24px;border-radius:7px;border:2px solid var(--bd2);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s;flex-shrink:0}
+.mc.on{background:var(--g);border-color:var(--g)}
+.mc.on::after{content:'✓';color:#000;font-size:14px;font-weight:800}
+.mn{font-size:14px;font-weight:500}
+.mt{font-size:11px;color:var(--t3);margin-top:1px}
+
+.er{display:flex;gap:6px;align-items:center;padding:7px 0;border-bottom:1px solid var(--bd)}
+.er:last-child{border-bottom:none}
+.en{font-size:12px;color:var(--t2);width:86px;flex-shrink:0}
+.es{display:flex;gap:3px;flex:1}
+.es>div{flex:1}
+.es input{width:100%;padding:6px 2px;background:var(--c2);border:1px solid var(--bd);border-radius:6px;text-align:center;font-size:12px;outline:none}
+.es input:focus{border-color:var(--a)}
+.es .sl{font-size:8px;color:var(--t3);text-align:center;margin-top:2px}
+
+.rg{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+.rc{display:flex;align-items:center;gap:8px;padding:10px;background:var(--c2);border-radius:var(--R3);cursor:pointer;user-select:none}
+.rc .mc{width:20px;height:20px}
+.rc span{font-size:13px}
+
+.sr{display:flex;gap:6px}
+.sb{flex:1;padding:10px;border-radius:var(--R3);border:1.5px solid var(--bd);background:var(--c2);font-size:20px;cursor:pointer;text-align:center;transition:.2s}
+.sb:active{transform:scale(.95)}
+.sb.on{border-color:var(--a);background:var(--a3)}
+
+.sg{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+.sc{background:var(--c2);border-radius:var(--R2);padding:14px 10px;text-align:center}
+.sv{font-size:22px;font-weight:800}
+.sv.cy{color:var(--a)}.sv.gn{color:var(--g)}.sv.pu{color:var(--p)}.sv.or{color:var(--o)}.sv.rd{color:var(--r)}
+.sl{font-size:10px;color:var(--t3);margin-top:3px;font-weight:500}
+.st{font-size:11px;margin-top:4px;font-weight:600}
+.st.dn{color:var(--g)}.st.up{color:var(--r)}.st.fl{color:var(--t3)}
+
+.cw{position:relative;height:200px;margin:10px 0}
+.cw canvas{width:100%;height:100%}
+
+.chr{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.cb{background:var(--c2);border:1px solid var(--bd);color:var(--t);width:34px;height:34px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px}
+.cg{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.ck{font-size:10px;color:var(--t3);text-align:center;padding:4px;font-weight:600}
+.cd2{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:8px;font-size:12px;cursor:pointer;position:relative;transition:.15s}
+.cd2.em{cursor:default}
+.cd2.ha{background:var(--a3);border:1px solid rgba(34,211,238,.2)}
+.cd2.td{border:1.5px solid var(--a)}
+.cd2 .dt{width:4px;height:4px;border-radius:50%;background:var(--a);position:absolute;bottom:3px}
+
+.btn{width:100%;padding:14px;border-radius:var(--R);border:none;background:linear-gradient(135deg,var(--a),var(--a2));color:#000;font-size:15px;font-weight:800;cursor:pointer;margin-top:6px;transition:.15s;letter-spacing:.3px}
+.btn:active{transform:scale(.97)}
+.btn.ok{background:var(--g2);color:var(--g);border:1px solid var(--g)}
+.btn-sm{padding:10px 16px;font-size:13px;width:auto;display:inline-flex;align-items:center;gap:6px}
+
+.tt{position:fixed;top:56px;left:50%;transform:translateX(-50%) translateY(-8px);background:var(--a);color:#000;padding:8px 20px;border-radius:20px;font-size:13px;font-weight:700;z-index:200;opacity:0;transition:.25s;pointer-events:none}
+.tt.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.dv{height:1px;background:var(--bd);margin:14px 0}
+.nt{width:100%;padding:10px 12px;background:var(--c2);border:1px solid var(--bd);border-radius:var(--R3);outline:none;resize:none;min-height:56px;font-family:inherit;font-size:14px}
+.nt:focus{border-color:var(--a)}
+
+.em{text-align:center;padding:40px 20px;color:var(--t3)}
+.em .e{font-size:40px;margin-bottom:8px}
+
+.me-row{display:flex;gap:6px;margin-bottom:6px;align-items:center}
+.me-row .me-l{font-size:12px;color:var(--t2);min-width:36px;font-weight:500}
+.me-row input{flex:1;padding:8px 10px;background:var(--c2);border:1px solid var(--bd);border-radius:var(--R3);outline:none;font-size:13px}
+.me-row input:focus{border-color:var(--a)}
+.me-add{font-size:12px;color:var(--a);cursor:pointer;padding:4px 0;font-weight:600}
+.me-del{color:var(--r);cursor:pointer;font-size:16px;padding:0 4px;opacity:.6}
+.me-del:hover{opacity:1}
+
+.sec-tabs{display:flex;gap:4px;margin-bottom:12px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}
+.sec-tab{padding:6px 12px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;border:1px solid var(--bd);background:var(--c2);color:var(--t2);transition:.2s}
+.sec-tab.on{border-color:var(--a);background:var(--a3);color:var(--a)}
+
+/* Share modal */
+.share-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:300;display:none;align-items:center;justify-content:center;padding:20px}
+.share-overlay.on{display:flex}
+.share-card{background:var(--c1);border:1px solid var(--bd);border-radius:var(--R);padding:20px;max-width:360px;width:100%;max-height:80vh;overflow-y:auto}
+.share-title{font-size:16px;font-weight:700;margin-bottom:12px;text-align:center}
+.share-content{background:var(--c2);border-radius:var(--R2);padding:14px;font-size:13px;line-height:1.7;white-space:pre-wrap;word-break:break-all;color:var(--t);margin-bottom:12px}
+.share-actions{display:flex;gap:8px}
+.share-actions button{flex:1;padding:10px;border-radius:var(--R3);border:1px solid var(--bd);background:var(--c2);color:var(--t);font-size:13px;font-weight:600;cursor:pointer;transition:.2s}
+.share-actions button:active{transform:scale(.97)}
+.share-actions .share-primary{background:linear-gradient(135deg,var(--a),var(--a2));color:#000;border:none}
+.share-close{position:absolute;top:12px;right:16px;background:none;border:none;color:var(--t2);font-size:24px;cursor:pointer}
+
+.share-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:20px;border:1px solid var(--bd);background:var(--c2);color:var(--a);font-size:12px;font-weight:600;cursor:pointer;transition:.2s}
+.share-btn:active{transform:scale(.95)}
+
+@media(min-width:500px){.pg{max-width:460px;margin:0 auto}}
+</style>
+</head>
+<body>
+<div class="tt" id="tt"></div>
+
+<!-- Share Modal -->
+<div class="share-overlay" id="shareOverlay" onclick="if(event.target===this)closeShare()">
+  <div class="share-card" style="position:relative">
+    <button class="share-close" onclick="closeShare()">×</button>
+    <div class="share-title">📋 今日记录</div>
+    <div class="share-content" id="shareContent"></div>
+    <div class="share-actions">
+      <button onclick="copyShare()">📋 复制文本</button>
+      <button class="share-primary" onclick="nativeShare()">📤 分享</button>
+    </div>
+  </div>
+</div>
+
+<header class="hd">
+  <div class="hd-r">
+    <div><div class="hd-t"><span>FitTrack</span></div><div class="hd-s" id="hd"></div></div>
+    <span class="pp p1" id="hp">Phase 1</span>
+  </div>
+</header>
+
+<div class="pg on" id="p-today"></div>
+<div class="pg" id="p-hist"></div>
+<div class="pg" id="p-prog"></div>
+<div class="pg" id="p-set"></div>
+
+<nav class="tb">
+  <button class="on" data-p="today"><span class="i">📝</span>今日</button>
+  <button data-p="hist"><span class="i">📅</span>历史</button>
+  <button data-p="prog"><span class="i">📊</span>进度</button>
+  <button data-p="set"><span class="i">⚙️</span>设置</button>
+</nav>
+
+<script>
+/* ===== KEYS ===== */
+const SK='ft_v5',GK='ft_g_v5',MK='ft_m_v5',EK='ft_e_v5';
+
+/* ===== TYPES ===== */
+const P1T=[
+  {id:'push',i:'🫸',l:'推日',s:'胸·肩·三头'},
+  {id:'pull',i:'🧲',l:'拉日',s:'背·二头'},
+  {id:'legs',i:'🦵',l:'腿日',s:'股四·臀·腿后'},
+  {id:'rest',i:'😴',l:'休息日',s:'彻底恢复'},
+];
+const P2T=[
+  {id:'d1',i:'🔥',l:'D1 推',s:'高碳·大重量'},
+  {id:'d2',i:'🧲',l:'D2 拉',s:'中碳·背部为主'},
+  {id:'d3',i:'🦵',l:'D3 腿',s:'高碳·复合为主'},
+  {id:'d4',i:'😴',l:'D4 休息',s:'低碳·彻底恢复'},
+  {id:'d5',i:'💪',l:'D5 肩背',s:'中碳·容量训练'},
+  {id:'d6',i:'🤸',l:'D6 上肢',s:'低碳·恢复轻训'},
+  {id:'d7',i:'🏋️',l:'D7 下肢',s:'低碳·核心轻训'},
+];
+
+/* ===== DEFAULT EXERCISES ===== */
+const DEF_EX={
+  push:[['器械推胸',4],['上斜哑铃推',4],['器械肩推',4],['器械夹胸',4],['绳索下压',4]],
+  pull:[['高位下拉',4],['坐姿划船',4],['单臂划船',4],['肩后练习',4],['哑铃弯举',4]],
+  legs:[['器械深蹲',4],['哑铃硬拉',4],['坐姿腿屈伸',4],['腿举',4]],
+  rest:[],
+  d1:[['杠铃卧推',4],['上斜哑铃推',4],['哑铃侧平举',4],['双杠臂屈伸',4],['三头下压',4]],
+  d2:[['引体/下拉',4],['杠铃划船',4],['坐姿划船',4],['面拉',4],['哑铃弯举',4]],
+  d3:[['杠铃深蹲',4],['罗马尼亚硬拉',4],['腿举',4],['坐姿腿屈伸',4],['站姿提踵',4]],
+  d4:[],
+  d5:[['坐姿哑铃推举',4],['哑铃侧平举',4],['器械划船',4],['反向飞鸟',4],['哑铃弯举',4]],
+  d6:[['面拉',3],['哑铃侧平举',3],['哑铃弯举',3],['三头下压',3],['平板支撑',3]],
+  d7:[['腿弯举',3],['站姿提踵',3],['哑铃硬拉(轻)',3],['平板支撑',3]],
+};
+
+/* ===== DEFAULT MEALS ===== */
+const DEF_ML={
+  p1:[{t:'早餐',l:'2水煮蛋 + 1勺蛋白粉 + 50g燕麦'},{t:'午餐',l:'鸡腿/鸭腿去皮 + 250g米饭 + 青菜 + 2全蛋'},{t:'练前',l:'1根香蕉'},{t:'练后',l:'1勺蛋白粉 + 1根香蕉'},{t:'晚餐',l:'250g鸡胸肉 + 青菜 + 5g油'}],
+  high:[{t:'早餐',l:'2蛋 + 1勺蛋白粉 + 60g燕麦'},{t:'午餐',l:'去皮鸭腿 + 350g熟米饭 + 蔬菜'},{t:'练前',l:'1根香蕉'},{t:'练后',l:'1勺蛋白粉 + 1根香蕉'},{t:'晚餐',l:'250g鸡胸/鱼 + 150g熟米饭 + 蔬菜 + 5g油'}],
+  mid:[{t:'早餐',l:'2蛋 + 1勺蛋白粉 + 40g燕麦'},{t:'午餐',l:'去皮鸭腿 + 250g熟米饭 + 蔬菜'},{t:'练前',l:'1根香蕉'},{t:'练后',l:'1勺蛋白粉'},{t:'晚餐',l:'250g鸡胸/鱼 + 100g熟米饭 + 蔬菜 + 5g油'}],
+  low:[{t:'早餐',l:'2蛋 + 1勺蛋白粉 + 30g燕麦'},{t:'午餐',l:'去皮鸭腿(~200g) + 100g熟米饭 + 蔬菜'},{t:'晚餐',l:'250g鸡胸/鱼 + 蔬菜 + 10g油'}],
+};
+
+/* ===== HELPERS ===== */
+function carbOf(d){if(/push|d1|d3/.test(d))return'high';if(/pull|d2|d5/.test(d))return'mid';return'low'}
+function carbL(c){return{high:'高碳日',mid:'中碳日',low:'低碳日'}[c]}
+function carbC(c){return{high:'or',mid:'b',low:'gn'}[c]}
+function p2(n){return String(n).padStart(2,'0')}
+function td(){const d=new Date();return`${d.getFullYear()}-${p2(d.getMonth()+1)}-${p2(d.getDate())}`}
+function fk(){return document.getElementById('id')?.value||td()}
+function ld(){try{return JSON.parse(localStorage.getItem(SK))||{}}catch{return{}}}
+function sv(d){localStorage.setItem(SK,JSON.stringify(d))}
+function lg(){try{return JSON.parse(localStorage.getItem(GK))}catch{return null}}
+function sg(g){localStorage.setItem(GK,JSON.stringify(g))}
+function lm(){try{return JSON.parse(localStorage.getItem(MK))}catch{return null}}
+function sm(m){localStorage.setItem(MK,JSON.stringify(m))}
+function le(){try{return JSON.parse(localStorage.getItem(EK))}catch{return null}}
+function se(e){localStorage.setItem(EK,JSON.stringify(e))}
+function getMeals(){return lm()||JSON.parse(JSON.stringify(DEF_ML))}
+function getEx(){return le()||JSON.parse(JSON.stringify(DEF_EX))}
+function toast(m){const t=document.getElementById('tt');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),1800)}
+
+/* ===== STATE ===== */
+let S={ph:1,dt:null,mc:{},rc:{},st:null};
+let cY,cM,setSTab='p1',setETab='push';
+
+/* ===== RENDER TODAY ===== */
+function rToday(){
+  const d=fk(),data=ld(),e=data[d]||{};
+  const now=new Date();
+  document.getElementById('hd').textContent=`${now.getMonth()+1}月${now.getDate()}日 · ${'日一二三四五六'[now.getDay()]}`;
+  const ph=S.ph;
+  const hp=document.getElementById('hp');
+  hp.textContent=ph===1?'Phase 1 · 稳降期':'Phase 2 · 冲刺期';
+  hp.className='pp '+(ph===1?'p1':'p2');
+
+  const types=ph===1?P1T:P2T;
+  const carb=S.dt?carbOf(S.dt):'mid';
+  const ml=getMeals();
+  const meals=ph===1?ml.p1:ml[carb];
+  const exKey=S.dt||(ph===1?'push':'d1');
+  const allEx=getEx();
+  const exs=allEx[exKey]||[];
+
+  let h='';
+
+  // Info
+  h+=`<div class="cd">
+    <div class="ch"><span class="e">📅</span>信息</div>
+    <div class="r2">
+      <div class="fg"><label>日期</label><input type="date" id="id" value="${d}" onchange="oDC()"></div>
+      <div class="fg"><label>阶段</label><select id="ip" onchange="oPC()"><option value="1"${ph===1?' selected':''}>Phase 1 · 稳降期</option><option value="2"${ph===2?' selected':''}>Phase 2 · 冲刺期</option></select></div>
+    </div>
+    <div class="r2" style="margin-top:8px">
+      <div class="fg"><label>周次 W</label><input type="number" id="iw" min="0" max="20" placeholder="—" value="${e.week||''}"></div>
+      <div class="fg"><label>天次 D</label><input type="number" id="id2" min="1" max="7" placeholder="—" value="${e.day||''}"></div>
+    </div>
+  </div>`;
+
+  // Weight
+  h+=`<div class="cd">
+    <div class="ch"><span class="e">⚖️</span>晨起空腹</div>
+    <div class="r2">
+      <div class="fg"><label>体重 (kg)</label><input type="number" step="0.1" id="iwt" placeholder="—" value="${e.weight||''}"></div>
+      <div class="fg"><label>腰围 (cm)</label><input type="number" step="0.5" id="iwa" placeholder="—" value="${e.waist||''}"></div>
+    </div>
+  </div>`;
+
+  // Day type
+  h+=`<div class="cd">
+    <div class="ch"><span class="e">🏋️</span>今日类型</div>
+    <div class="dg">${types.map(t=>`<div class="db${S.dt===t.id?' on':''}" onclick="pDT('${t.id}')"><span class="ii">${t.i}</span>${t.l}<div class="s">${t.s}</div></div>`).join('')}</div>
+  </div>`;
+
+  // Diet
+  h+=`<div class="cd">
+    <div class="ch"><span class="e">🍽️</span>饮食<span style="margin-left:auto;font-size:11px;color:var(--${carbC(carb)});font-weight:600">${ph===1?'固定饮食':carbL(carb)}</span></div>
+    ${(meals||[]).map((m,i)=>`<div class="ml" onclick="tM(this,${i})">
+      <div class="mc${e.meals&&e.meals[i]?' on':''}" data-m="${i}"></div>
+      <div><div class="mn">${m.l}</div><div class="mt">${m.t}</div></div>
+    </div>`).join('')}
+  </div>`;
+
+  // Training
+  if(exs.length){
+    h+=`<div class="cd">
+      <div class="ch"><span class="e">💪</span>训练</div>
+      ${exs.map((ex,ei)=>`<div class="er"><span class="en">${ex[0]}</span><div class="es">${Array.from({length:ex[1]},(_,si)=>`<div><input id="e${ei}_${si}" placeholder="—" value="${e.exD?.[ei]?.[si]||''}"><div class="sl">S${si+1}</div></div>`).join('')}</div></div>`).join('')}
+      <div class="dv"></div>
+      <div class="ch" style="margin-bottom:8px"><span class="e">🏃</span>有氧</div>
+      <div class="r2">
+        <div class="fg"><label>时长 (min)</label><input type="number" id="icd" placeholder="—" value="${e.cd?.t||''}"></div>
+        <div class="fg"><label>心率</label><input type="number" id="ihr" placeholder="—" value="${e.cd?.hr||''}"></div>
+      </div>
+      <div class="fg" style="margin-top:6px"><label>方式</label><input type="text" id="ict" placeholder="爬坡慢走 / HIIT / 稳态…" value="${e.cd?.tp||''}"></div>
+    </div>`;
+  } else {
+    h+=`<div class="cd"><div class="ch"><span class="e">💪</span>训练</div><div style="text-align:center;color:var(--t3);padding:16px;font-size:14px">😴 休息日，好好恢复</div></div>`;
+  }
+
+  // Recovery
+  h+=`<div class="cd">
+    <div class="ch"><span class="e">😴</span>恢复</div>
+    <div class="r2">
+      <div class="fg"><label>睡眠 (h)</label><input type="number" step="0.5" id="isl" placeholder="—" value="${e.rc?.sl||''}"></div>
+      <div class="fg"><label>步数</label><input type="number" id="ist" placeholder="—" value="${e.rc?.st||''}"></div>
+    </div>
+    <div class="rg" style="margin-top:10px">
+      <div class="rc" onclick="tR(this,'w')"><div class="mc${e.rc?.w?' on':''}" data-r="w"></div><span>💧 饮水 ≥3L</span></div>
+      <div class="rc" onclick="tR(this,'cr')"><div class="mc${e.rc?.cr?' on':''}" data-r="cr"></div><span>💊 肌酸 5g</span></div>
+    </div>
+    <div style="margin-top:12px">
+      <label style="font-size:11px;color:var(--t3);display:block;margin-bottom:6px;font-weight:500">状态</label>
+      <div class="sr">
+        <div class="sb${e.st==='good'?' on':''}" data-s="good" onclick="pS(this)">😊</div>
+        <div class="sb${e.st==='ok'?' on':''}" data-s="ok" onclick="pS(this)">😐</div>
+        <div class="sb${e.st==='bad'?' on':''}" data-s="bad" onclick="pS(this)">😫</div>
+      </div>
+    </div>
+    <div style="margin-top:12px">
+      <label style="font-size:11px;color:var(--t3);display:block;margin-bottom:6px;font-weight:500">备注</label>
+      <textarea class="nt" id="inn" placeholder="今天感觉怎么样…">${e.notes||''}</textarea>
+    </div>
+  </div>`;
+
+  // Action buttons
+  h+=`<div style="display:flex;gap:8px;margin-top:6px">
+    <button class="btn" style="flex:2" id="bs" onclick="saveD()">💾 保存</button>
+    <button class="share-btn" style="flex:1;justify-content:center;padding:14px;font-size:14px" onclick="genShare()">📤 分享</button>
+  </div>`;
+
+  document.getElementById('p-today').innerHTML=h;
+  if(e.dayType)S.dt=e.dayType;
+  if(e.meals)S.mc={...e.meals};
+  if(e.rc)S.rc={w:!!e.rc.w,cr:!!e.rc.cr};
+  if(e.st)S.st=e.st;
+}
+
+/* ===== INTERACTIONS ===== */
+function oDC(){
+  const d=fk(),data=ld(),e=data[d];
+  if(e){S.ph=e.phase||1;S.dt=e.dayType||null;S.mc=e.meals||{};S.rc={w:!!e.rc?.w,cr:!!e.rc?.cr};S.st=e.st||null;toast('📋 已加载该日记录')}
+  else{S.dt=null;S.mc={};S.rc={};S.st=null}
+  rToday();
+}
+function oPC(){S.ph=+document.getElementById('ip').value;S.dt=null;rToday()}
+function pDT(id){S.dt=id;rToday()}
+function tM(el,i){const c=el.querySelector('.mc');S.mc[i]=!S.mc[i];c.classList.toggle('on',S.mc[i])}
+function tR(el,k){const c=el.querySelector('.mc');S.rc[k]=!S.rc[k];c.classList.toggle('on',S.rc[k])}
+function pS(el){document.querySelectorAll('.sb').forEach(b=>b.classList.remove('on'));el.classList.add('on');S.st=el.dataset.s}
+
+/* ===== SAVE ===== */
+function saveD(){
+  const d=document.getElementById('id').value;
+  if(!d){toast('⚠️ 请选择日期');return}
+  const exKey=S.dt||(S.ph===1?'push':'d1');
+  const allEx=getEx();
+  const exs=allEx[exKey]||[];
+  const exD=exs.map((ex,ei)=>Array.from({length:ex[1]},(_,si)=>document.getElementById(`e${ei}_${si}`)?.value||''));
+
+  const entry={
+    phase:S.ph,dayType:S.dt,
+    week:document.getElementById('iw').value,
+    day:document.getElementById('id2').value,
+    weight:document.getElementById('iwt').value,
+    waist:document.getElementById('iwa').value,
+    meals:{...S.mc},exD,
+    cd:{t:document.getElementById('icd')?.value||'',hr:document.getElementById('ihr')?.value||'',tp:document.getElementById('ict')?.value||''},
+    rc:{sl:document.getElementById('isl').value,st:document.getElementById('ist').value,w:!!S.rc.w,cr:!!S.rc.cr},
+    st:S.st,notes:document.getElementById('inn').value,ts:Date.now(),
+  };
+  const data=ld();data[d]=entry;sv(data);
+  const b=document.getElementById('bs');b.textContent='✅ 已保存';b.classList.add('ok');
+  setTimeout(()=>{b.textContent='💾 保存';b.classList.remove('ok')},2000);
+  toast('✅ 记录已保存');
+}
+
+/* ===== SHARE ===== */
+function genShare(){
+  saveD();
+  const d=fk(),data=ld(),e=data[d];
+  if(!e){toast('⚠️ 请先保存记录');return}
+
+  const dm={push:'推日',pull:'拉日',legs:'腿日',rest:'休息日',d1:'D1 推·高碳',d2:'D2 拉·中碳',d3:'D3 腿·高碳',d4:'D4 休息',d5:'D5 肩背·中碳',d6:'D6 上肢·低碳',d7:'D7 下肢·低碳'};
+  const se2={good:'😊 状态好',ok:'😐 状态一般',bad:'😫 状态差'}[e.st]||'';
+  const exKey=e.dayType||(e.phase===1?'push':'d1');
+  const allEx=getEx();
+  const exs=allEx[exKey]||[];
+
+  const carb=e.dayType?carbOf(e.dayType):'mid';
+  const ml=getMeals();
+  const meals=e.phase===1?ml.p1:ml[carb];
+
+  let txt=`💪 FitTrack · ${d}\n`;
+  txt+=`━━━━━━━━━━━━━━━\n`;
+  txt+=`📌 ${dm[e.dayType]||''} · Phase ${e.phase} W${e.week||'?'} D${e.day||'?'}\n`;
+  if(carb&&e.phase===2)txt+=`🍚 ${carbL(carb)}\n`;
+  txt+=`\n`;
+
+  if(e.weight)txt+=`⚖️ 体重: ${e.weight}kg`;
+  if(e.waist)txt+=`  📏 腰围: ${e.waist}cm`;
+  if(e.weight||e.waist)txt+=`\n\n`;
+
+  // Meals checked
+  if(e.meals&&meals){
+    txt+=`🍽️ 饮食\n`;
+    meals.forEach((m,i)=>{
+      if(e.meals[i])txt+=`  ✅ ${m.t}: ${m.l}\n`;
+      else txt+=`  ⬜ ${m.t}: ${m.l}\n`;
+    });
+    txt+=`\n`;
+  }
+
+  // Exercises
+  if(exs.length&&e.exD){
+    txt+=`💪 训练\n`;
+    exs.forEach((ex,ei)=>{
+      const sets=(e.exD[ei]||[]).filter(s=>s);
+      if(sets.length){
+        txt+=`  ${ex[0]}: ${sets.join(' / ')}\n`;
+      }
+    });
+    txt+=`\n`;
+  }
+
+  // Cardio
+  if(e.cd?.t)txt+=`🏃 有氧: ${e.cd.t}min ${e.cd.tp||''} ${e.cd.hr?'(心率'+e.cd.hr+')':''}\n`;
+
+  // Recovery
+  txt+=`\n😴 恢复\n`;
+  if(e.rc?.sl)txt+=`  睡眠: ${e.rc.sl}h\n`;
+  if(e.rc?.st)txt+=`  步数: ${e.rc.st}\n`;
+  if(e.rc?.w)txt+=`  💧 饮水 ≥3L ✅\n`;
+  if(e.rc?.cr)txt+=`  💊 肌酸 5g ✅\n`;
+
+  if(se2)txt+=`\n${se2}\n`;
+  if(e.notes)txt+=`\n📝 ${e.notes}\n`;
+
+  txt+=`\n━━━━━━━━━━━━━━━\n`;
+  txt+=`🏋️ Keep pushing!`;
+
+  document.getElementById('shareContent').textContent=txt;
+  document.getElementById('shareOverlay').classList.add('on');
+}
+
+function copyShare(){
+  const txt=document.getElementById('shareContent').textContent;
+  navigator.clipboard.writeText(txt).then(()=>toast('📋 已复制到剪贴板')).catch(()=>{
+    // fallback
+    const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+    toast('📋 已复制到剪贴板');
+  });
+}
+
+function nativeShare(){
+  const txt=document.getElementById('shareContent').textContent;
+  if(navigator.share){
+    navigator.share({title:'FitTrack 今日记录',text:txt}).catch(()=>{});
+  } else {
+    copyShare();
+  }
+}
+
+function closeShare(){document.getElementById('shareOverlay').classList.remove('on')}
+
+/* ===== HISTORY ===== */
+function rHist(){
+  const now=new Date();
+  if(!cY){cY=now.getFullYear();cM=now.getMonth()}
+  const data=ld(),today=td();
+  const fd=new Date(cY,cM,1).getDay();
+  const dim=new Date(cY,cM+1,0).getDate();
+
+  let h=`<div class="cd">
+    <div class="ch"><span class="e">📆</span>记录日历</div>
+    <div class="chr">
+      <button class="cb" onclick="cM2(-1)">◀</button>
+      <span style="font-weight:700;font-size:15px">${cY}年${cM+1}月</span>
+      <button class="cb" onclick="cM2(1)">▶</button>
+    </div>
+    <div class="cg">
+      ${'日一二三四五六'.split('').map(d=>`<div class="ck">${d}</div>`).join('')}
+      ${'<div class="cd2 em"></div>'.repeat(fd)}
+      ${Array.from({length:dim},(_,i)=>{
+        const ds=`${cY}-${p2(cM+1)}-${p2(i+1)}`;
+        return`<div class="cd2${data[ds]?' ha':''}${ds===today?' td':''}" onclick="sD('${ds}')">${i+1}${data[ds]?'<div class="dt"></div>':''}</div>`;
+      }).join('')}
+    </div>
+  </div><div id="hdet"></div>`;
+  document.getElementById('p-hist').innerHTML=h;
+}
+
+function sD(ds){
+  const data=ld(),e=data[ds],el=document.getElementById('hdet');
+  if(!e){el.innerHTML=`<div class="em"><div class="e">📝</div>${ds} 无记录</div>`;return}
+  const dm={push:'推日',pull:'拉日',legs:'腿日',rest:'休息日',d1:'D1 推·高碳',d2:'D2 拉·中碳',d3:'D3 腿·高碳',d4:'D4 休息',d5:'D5 肩背·中碳',d6:'D6 上肢·低碳',d7:'D7 下肢·低碳'};
+  const se2={good:'😊',ok:'😐',bad:'😫'}[e.st]||'';
+  let exH='';
+  if(e.exD){
+    const ek=e.dayType||(e.phase===1?'push':'d1');
+    const allEx=getEx();
+    const exs=allEx[ek]||[];
+    exH=exs.map((ex,ei)=>{const ss=(e.exD[ei]||[]).filter(s=>s).map((s,si)=>`S${si+1}: ${s}`).join(' │ ');return ss?`<div style="font-size:13px;padding:3px 0"><b style="color:var(--t)">${ex[0]}</b> → ${ss}</div>`:''}).filter(Boolean).join('');
+  }
+  el.innerHTML=`<div class="cd" style="margin-top:4px">
+    <div style="font-size:15px;font-weight:700;margin-bottom:8px">${ds} · ${dm[e.dayType]||''} ${se2}</div>
+    ${e.weight?`<div style="font-size:13px;color:var(--t2)">⚖️ <b style="color:var(--t)">${e.weight}kg</b>${e.waist?' │ 📏 '+e.waist+'cm':''}</div>`:''}
+    ${e.rc?`<div style="font-size:13px;color:var(--t2)">😴 ${e.rc.sl||'—'}h │ 🚶 ${e.rc.st||'—'}步</div>`:''}
+    ${e.week?`<div style="font-size:13px;color:var(--t2)">W${e.week} D${e.day||'—'} · Phase ${e.phase}</div>`:''}
+    ${exH?'<div class="dv"></div>'+exH:''}
+    ${e.cd?.t?'<div style="font-size:13px;color:var(--t2);margin-top:4px">🏃 '+e.cd.t+'min '+e.cd.tp+'</div>':''}
+    ${e.notes?'<div class="dv"></div><div style="font-size:13px;color:var(--t2)">📝 '+e.notes+'</div>':''}
+  </div>`;
+}
+function cM2(d){cM+=d;if(cM>11){cM=0;cY++}if(cM<0){cM=11;cY--}rHist()}
+
+/* ===== PROGRESS ===== */
+function rProg(){
+  const data=ld();
+  const entries=Object.entries(data).sort(([a],[b])=>a.localeCompare(b)).map(([k,v])=>({...v,d:k}));
+  const g=lg(),ws=entries.filter(e=>e.weight);
+  let h='';
+  const lat=ws[ws.length-1],fir=ws[0];
+  let si='';
+  if(lat&&fir){
+    const df=(parseFloat(lat.weight)-parseFloat(fir.weight)).toFixed(1);
+    const cl=df<0?'dn':df>0?'up':'fl';
+    const ar=df<0?'↓':df>0?'↑':'→';
+    si=`<div class="sc"><div class="sv cy">${lat.weight}</div><div class="sl">当前体重 kg</div><div class="st ${cl}">${ar} ${Math.abs(df)} kg</div></div>
+    <div class="sc"><div class="sv gn">${lat.waist||'—'}</div><div class="sl">当前腰围 cm</div></div>
+    <div class="sc"><div class="sv pu">${entries.length}</div><div class="sl">记录天数</div></div>
+    <div class="sc"><div class="sv or">${lat.week||'—'}</div><div class="sl">当前周次</div></div>`;
+  } else si='<div style="grid-column:1/-1;text-align:center;color:var(--t3);padding:20px">开始记录后显示统计</div>';
+  h+=`<div class="cd"><div class="ch"><span class="e">📊</span>总览</div><div class="sg">${si}</div></div>`;
+  h+=`<div class="cd"><div class="ch"><span class="e">📉</span>体重趋势</div><div class="cw"><canvas id="cv"></canvas></div></div>`;
+  if(g&&lat){
+    const wd=(parseFloat(lat.weight)-parseFloat(g.weight)).toFixed(1);
+    const wk=Math.max(0,Math.ceil(parseFloat(wd)/0.7));
+    h+=`<div class="cd"><div class="ch"><span class="e">🎯</span>目标对比</div><div class="sg">
+      <div class="sc"><div class="sv cy" style="font-size:18px">${g.weight}kg</div><div class="sl">目标体重</div><div class="st ${parseFloat(wd)>0?'dn':'fl'}">还差 ${wd} kg</div></div>
+      <div class="sc"><div class="sv gn" style="font-size:18px">${g.waist||'—'}cm</div><div class="sl">目标腰围</div></div>
+      <div class="sc"><div class="sv pu" style="font-size:18px">~${wk}周</div><div class="sl">预计还需</div></div>
+      <div class="sc"><div class="sv or" style="font-size:18px">${g.date||'—'}</div><div class="sl">截止日期</div></div>
+    </div></div>`;
+  }
+  document.getElementById('p-prog').innerHTML=h;
+  if(ws.length>=2)drawCv(ws,g);
+}
+
+function drawCv(ws,g){
+  const cv=document.getElementById('cv');if(!cv)return;
+  const ctx=cv.getContext('2d');
+  const r=cv.parentElement.getBoundingClientRect();
+  cv.width=r.width*2;cv.height=r.height*2;ctx.scale(2,2);
+  const W=r.width,H=r.height,P={t:20,r:16,b:28,l:38},cw=W-P.l-P.r,ch=H-P.t-P.b;
+  const vals=ws.map(e=>parseFloat(e.weight));
+  const mn=Math.floor(Math.min(...vals,(g?.weight?parseFloat(g.weight):999))-1);
+  const mx=Math.ceil(Math.max(...vals)+1),rng=mx-mn;
+  ctx.clearRect(0,0,W,H);
+  ctx.strokeStyle='#1e1e28';ctx.lineWidth=.5;
+  for(let i=0;i<=4;i++){const y=P.t+ch/4*i;ctx.beginPath();ctx.moveTo(P.l,y);ctx.lineTo(W-P.r,y);ctx.stroke();ctx.fillStyle='#555568';ctx.font='10px sans-serif';ctx.textAlign='right';ctx.fillText((mx-rng/4*i).toFixed(1),P.l-4,y+3)}
+  if(g?.weight){const gy=P.t+ch-((parseFloat(g.weight)-mn)/rng)*ch;if(gy>P.t&&gy<H-P.b){ctx.strokeStyle='rgba(248,113,113,.35)';ctx.lineWidth=1;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(P.l,gy);ctx.lineTo(W-P.r,gy);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#f87171';ctx.font='10px sans-serif';ctx.textAlign='left';ctx.fillText('🎯 '+g.weight+'kg',W-P.r-50,gy-4)}}
+  const gr=ctx.createLinearGradient(0,P.t,0,H-P.b);gr.addColorStop(0,'rgba(34,211,238,.18)');gr.addColorStop(1,'rgba(34,211,238,0)');
+  ctx.fillStyle=gr;ctx.beginPath();vals.forEach((v,i)=>{const x=P.l+cw/(vals.length-1)*i,y=P.t+ch-((v-mn)/rng)*ch;i===0?ctx.moveTo(x,y):ctx.lineTo(x,y)});ctx.lineTo(P.l+cw,H-P.b);ctx.lineTo(P.l,H-P.b);ctx.fill();
+  ctx.strokeStyle='#22d3ee';ctx.lineWidth=2.5;ctx.lineJoin='round';ctx.lineCap='round';ctx.beginPath();vals.forEach((v,i)=>{const x=P.l+cw/(vals.length-1)*i,y=P.t+ch-((v-mn)/rng)*ch;i===0?ctx.moveTo(x,y):ctx.lineTo(x,y)});ctx.stroke();
+  vals.forEach((v,i)=>{const x=P.l+cw/(vals.length-1)*i,y=P.t+ch-((v-mn)/rng)*ch;ctx.beginPath();ctx.arc(x,y,3,0,Math.PI*2);ctx.fillStyle='#22d3ee';ctx.fill();ctx.beginPath();ctx.arc(x,y,1.5,0,Math.PI*2);ctx.fillStyle='#08080c';ctx.fill()});
+  ctx.fillStyle='#555568';ctx.font='10px sans-serif';ctx.textAlign='center';const st=Math.max(1,Math.floor(vals.length/5));
+  ws.forEach((e,i)=>{if(i%st===0||i===ws.length-1){const x=P.l+cw/(vals.length-1)*i,d=new Date(e.d);ctx.fillText(`${d.getMonth()+1}/${d.getDate()}`,x,H-8)}});
+}
+
+/* ===== SETTINGS ===== */
+function rSet(){
+  const g=lg()||{};
+  const ml=getMeals();
+  const allEx=getEx();
+
+  const mlTabs=[{k:'p1',l:'Phase 1 固定'},{k:'high',l:'高碳日'},{k:'mid',l:'中碳日'},{k:'low',l:'低碳日'}];
+  const exTabs=[{k:'push',l:'P1 推日'},{k:'pull',l:'P1 拉日'},{k:'legs',l:'P1 腿日'},{k:'d1',l:'P2 D1 推'},{k:'d2',l:'P2 D2 拉'},{k:'d3',l:'P2 D3 腿'},{k:'d5',l:'P2 D5 肩背'},{k:'d6',l:'P2 D6 上肢'},{k:'d7',l:'P2 D7 下肢'}];
+
+  let h=`<div class="cd">
+    <div class="ch"><span class="e">🎯</span>目标设定</div>
+    <div class="r2">
+      <div class="fg"><label>目标体重 (kg)</label><input type="number" step="0.1" id="gw" value="${g.weight||72}"></div>
+      <div class="fg"><label>目标腰围 (cm)</label><input type="number" step="0.5" id="gwa" value="${g.waist||78}"></div>
+    </div>
+    <div class="r2" style="margin-top:8px">
+      <div class="fg"><label>截止日期</label><input type="date" id="gd" value="${g.date||'2026-07-01'}"></div>
+      <div class="fg"><label>起始体重</label><input type="number" step="0.1" id="gs" value="${g.start||''}"></div>
+    </div>
+    <button class="btn" onclick="sG()" style="margin-top:12px">保存目标</button>
+  </div>`;
+
+  // Exercise editor
+  h+=`<div class="cd">
+    <div class="ch"><span class="e">💪</span>训练动作设置</div>
+    <div style="font-size:12px;color:var(--t3);margin-bottom:10px">抢不到器械？在这里改动作名称，今日页面会自动同步</div>
+    <div class="sec-tabs">${exTabs.map(t=>`<div class="sec-tab${setETab===t.k?' on':''}" onclick="sET('${t.k}')">${t.l}</div>`).join('')}</div>
+    <div id="ex-editor">${rEE(setETab,allEx[setETab]||[])}</div>
+  </div>`;
+
+  // Meal editor
+  h+=`<div class="cd">
+    <div class="ch"><span class="e">🍽️</span>饮食方案设置</div>
+    <div class="sec-tabs">${mlTabs.map(t=>`<div class="sec-tab${setSTab===t.k?' on':''}" onclick="sST('${t.k}')">${t.l}</div>`).join('')}</div>
+    <div id="meal-editor">${rME(setSTab,ml[setSTab]||[])}</div>
+  </div>`;
+
+  // Data management
+  h+=`<div class="cd">
+    <div class="ch"><span class="e">📤</span>数据管理</div>
+    <button class="btn" style="background:var(--c2);color:var(--a);border:1px solid var(--a);margin-bottom:8px" onclick="expA()">📤 导出数据</button>
+    <button class="btn" style="background:var(--c2);color:var(--o);border:1px solid var(--o);margin-bottom:8px" onclick="document.getElementById('imf').click()">📥 导入数据</button>
+    <input type="file" id="imf" accept=".json" style="display:none" onchange="impA(event)">
+    <button class="btn" style="background:var(--c2);color:var(--r);border:1px solid var(--r)" onclick="if(confirm('确定清除所有数据？不可恢复！')){localStorage.clear();location.reload()}">🗑️ 清除全部数据</button>
+  </div>`;
+
+  h+=`<div style="text-align:center;padding:16px 0;color:var(--t3);font-size:11px">FitTrack v4.0 · 数据存在浏览器本地<br>分享网址给朋友，每人独立数据</div>`;
+  document.getElementById('p-set').innerHTML=h;
+}
+
+/* Exercise editor render */
+function rEE(key,items){
+  return items.map((ex,i)=>`<div class="me-row">
+    <input value="${ex[0]}" placeholder="动作名称" onchange="uEI('${key}',${i},0,this.value)" style="flex:2">
+    <input type="number" min="1" max="10" value="${ex[1]}" onchange="uEI('${key}',${i},1,+this.value)" style="flex:0 0 50px;text-align:center">
+    <span style="font-size:11px;color:var(--t3)">组</span>
+    <span class="me-del" onclick="dEI('${key}',${i})">×</span>
+  </div>`).join('')+`<div class="me-add" onclick="aEI('${key}')">+ 添加动作</div>`;
+}
+
+function sET(k){setETab=k;const allEx=getEx();document.getElementById('ex-editor').innerHTML=rEE(k,allEx[k]||[])}
+function uEI(k,i,f,v){const allEx=getEx();if(!allEx[k])allEx[k]=[];if(!allEx[k][i])allEx[k][i]=['',4];allEx[k][i][f]=f===1?+v:v;se(allEx)}
+function aEI(k){const allEx=getEx();if(!allEx[k])allEx[k]=[];allEx[k].push(['新动作',4]);se(allEx);document.getElementById('ex-editor').innerHTML=rEE(k,allEx[k])}
+function dEI(k,i){const allEx=getEx();allEx[k].splice(i,1);se(allEx);document.getElementById('ex-editor').innerHTML=rEE(k,allEx[k])}
+
+/* Meal editor render */
+function rME(key,items){
+  return items.map((m,i)=>`<div class="me-row">
+    <span class="me-l">${m.t}</span>
+    <input value="${m.l.replace(/"/g,'&quot;')}" onchange="uMI('${key}',${i},'l',this.value)">
+    <span class="me-del" onclick="dMI('${key}',${i})">×</span>
+  </div>`).join('')+`<div class="me-add" onclick="aMI('${key}')">+ 添加一项</div>`;
+}
+
+function sST(k){setSTab=k;const ml=getMeals();document.getElementById('meal-editor').innerHTML=rME(k,ml[k]||[])}
+function uMI(k,i,f,v){const ml=getMeals();if(ml[k]&&ml[k][i]){ml[k][i][f]=v;sm(ml)}}
+function aMI(k){const ml=getMeals();if(!ml[k])ml[k]=[];ml[k].push({t:'自定义',l:'点击编辑'});sm(ml);document.getElementById('meal-editor').innerHTML=rME(k,ml[k])}
+function dMI(k,i){const ml=getMeals();ml[k].splice(i,1);sm(ml);document.getElementById('meal-editor').innerHTML=rME(k,ml[k])}
+
+function sG(){sg({weight:document.getElementById('gw').value,waist:document.getElementById('gwa').value,date:document.getElementById('gd').value,start:document.getElementById('gs').value});toast('✅ 目标已保存')}
+function expA(){const obj={data:ld(),goals:lg(),meals:lm(),exercises:le()};const b=new Blob([JSON.stringify(obj,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`fittrack_${td()}.json`;a.click();toast('📤 已导出')}
+function impA(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{try{const o=JSON.parse(e.target.result);if(o.data){const ex=ld();sv({...ex,...o.data})}if(o.goals)sg(o.goals);if(o.meals)sm(o.meals);if(o.exercises)se(o.exercises);toast('✅ 导入成功');rSet()}catch{toast('⚠️ 文件格式错误')}};r.readAsText(f)}
+
+/* ===== NAV ===== */
+function go(pg){
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tb button').forEach(b=>b.classList.remove('on'));
+  document.getElementById('p-'+pg).classList.add('on');
+  document.querySelector(`.tb button[data-p="${pg}"]`).classList.add('on');
+  if(pg==='today')rToday();
+  if(pg==='hist')rHist();
+  if(pg==='prog')rProg();
+  if(pg==='set')rSet();
+}
+document.querySelectorAll('.tb button').forEach(b=>b.addEventListener('click',()=>go(b.dataset.p)));
+
+/* ===== INIT ===== */
+const td2=ld()[td()];
+if(td2){S.ph=td2.phase||1;S.dt=td2.dayType||null;S.mc=td2.meals||{};S.rc={w:!!td2.rc?.w,cr:!!td2.rc?.cr};S.st=td2.st||null}
+rToday();
+</script>
+</body>
+</html>
